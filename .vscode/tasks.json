@@ -53,7 +53,9 @@
       "type": "pickString",
       "description": "Name of addon (to add your addon to this list, please edit .vscode/tasks.json)",
       "options": [
-        "example",
+        "zigbee2mqtt",
+        "zigbee2mqtt-edge",
+        "zigbee2mqtt-proxy",
       ]
     }
   ]

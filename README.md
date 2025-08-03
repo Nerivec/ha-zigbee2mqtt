@@ -1,46 +1,58 @@
-# Example Home Assistant add-on repository
+# Home Assistant Add-on: Zigbee2MQTT
 
-This repository can be used as a "blueprint" for add-on development to help you get started.
+[![Builder](https://github.com/Nerivec/ha-zigbee2mqtt/actions/workflows/builder.yaml/badge.svg)](https://github.com/Nerivec/ha-zigbee2mqtt/actions/workflows/builder.yaml)
+![Supports aarch64 Architecture](https://img.shields.io/badge/aarch64-yes-green.svg)
+![Supports amd64 Architecture](https://img.shields.io/badge/amd64-yes-green.svg)
+![Supports armhf Architecture](https://img.shields.io/badge/armhf-yes-green.svg)
+![Supports armv7 Architecture](https://img.shields.io/badge/armv7-yes-green.svg)
+![Supports i386 Architecture](https://img.shields.io/badge/i386-yes-green.svg)
 
-Add-on documentation: <https://developers.home-assistant.io/docs/add-ons>
+> [!IMPORTANT]
+> Currently in testing.
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fhome-assistant%2Faddons-example)
+Zigbee2MQTT Home Assistant add-ons.
 
-## Add-ons
+This is based on https://github.com/zigbee2mqtt/hassio-zigbee2mqtt with the following changes:
+- Rewrite to use s6-overlay & co, and improve configuration handling
+- ⚠️ BREAKING: Use `addon_config` mapping. See [migration](#migrating-from-official-add-on)
+  - Config folder is now included in Home Assistant add-on backups
+  - Each add-on now has its own config folder (if wanting to switch between regular and edge add-ons, you must copy over the data)
+  - The toggle to delete the add-on data when uninstalling the add-on will now remove your Zigbee2MQTT configuration (yaml, db, logs, etc.)
+- All `configuration.yaml` settings are now handled either through the onboarding (can be forced in add-on configuration tab), the frontend once Zigbee2MQTT has started, or directly in the file itself (using add-on) while Zigbee2MQTT is stopped
+- The [Zigbee2MQTT watchdog](https://www.zigbee2mqtt.io/guide/installation/15_watchdog.html) is now enabled by default, with `default` settings
+- For easier debugging (advanced), can now override app code through `app_overrides` folder in add-on config folder
+  - On add-on start, if the `app_overrides` folder exists, its content is copied over the Zigbee2MQTT app folder (using exact folder structure)
+  - Deleting the `app_overrides` folder will remove any override on next add-on start
 
-This repository contains the following add-ons
+## Installing this repository in your add-on store
 
-### [Example add-on](./example)
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FNerivec%2Fha-zigbee2mqtt)
 
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
-![Supports armhf Architecture][armhf-shield]
-![Supports armv7 Architecture][armv7-shield]
-![Supports i386 Architecture][i386-shield]
+For more details: https://www.home-assistant.io/common-tasks/os#installing-a-third-party-add-on-repository
 
-_Example add-on to use as a blueprint for new add-ons._
+## Migrating from official add-on
 
-<!--
+If you are migrating an existing installation from https://github.com/zigbee2mqtt/hassio-zigbee2mqtt you will need to move your `configuration.yaml` (& logs if wanted).
 
-Notes to developers after forking or using the github template feature:
-- While developing comment out the 'image' key from 'example/config.yaml' to make the supervisor build the addon
-  - Remember to put this back when pushing up your changes.
-- When you merge to the 'main' branch of your repository a new build will be triggered.
-  - Make sure you adjust the 'version' key in 'example/config.yaml' when you do that.
-  - Make sure you update 'example/CHANGELOG.md' when you do that.
-  - The first time this runs you might need to adjust the image configuration on github container registry to make it public
-  - You may also need to adjust the github Actions configuration (Settings > Actions > General > Workflow > Read & Write)
-- Adjust the 'image' key in 'example/config.yaml' so it points to your username instead of 'home-assistant'.
-  - This is where the build images will be published to.
-- Rename the example directory.
-  - The 'slug' key in 'example/config.yaml' should match the directory name.
-- Adjust all keys/url's that points to 'home-assistant' to now point to your user/fork.
-- Share your repository on the forums https://community.home-assistant.io/c/projects/9
-- Do awesome stuff!
- -->
+- Install the add-on, (check the add-on configuration page if anything needs changing for your setup)
+- Install, start and open the [Studio Code Server add-on](https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-visual-studio-code-vsc-add-on) from the add-on store
+- In Menu > File > Add folder to workspace, select the `addon_configs` folder and add it
+- After the interface is done reloading, you should then see both the `config` and the `addon_configs` folders
+- If the appropriate `*_zigbee2mqtt*` folder does not exist, you must create it
+  - You can get the exact name the folder should have by navigating to the add-on page and taking note of the URL:
+    - Example URL: `http://homeassistant.local:8123/hassio/addon/abcd1234_zigbee2mqtt_edge/info`
+    - Example folder name: `abcd1234_zigbee2mqtt_edge`
+    - ⚠️ Be sure to take the right add-on if you have multiple Zigbee2MQTT installed
+- Move the contents of the `config/zigbee2mqtt` folder to the previously identified folder in `addon_configs`
+  - You should end up with something like this (uses example folder name from above):
+    - `addon_configs`
+      - `abcd1234_zigbee2mqtt_edge`
+        - `log`
+        - `configuration.yaml`
+        - `coordinator_backup.json`
+        - `database.db`
+        - `database.db.backup`
+        - `state.json`
+- Go back to the add-on and start it
 
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
+If, after this, Zigbee2MQTT keeps showing the onboarding page on start, check the above steps again.

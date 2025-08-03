@@ -1,0 +1,28 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Zigbee2MQTT Proxy
+version: "1.0.0"
+breaking_versions: []
+slug: zigbee2mqtt_proxy
+description: Proxy for externally running Zigbee2MQTT
+url: "https://github.com/Nerivec/ha-zigbee2mqtt/tree/main/zigbee2mqtt-proxy"
+panel_icon: "mdi:zigbee"
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+image: "ghcr.io/nerivec/ha-zigbee2mqtt-proxy-{arch}"
+init: false
+ingress: true
+timeout: 30
+map:
+  - addon_config:rw
+ports:
+  "8099/tcp": null
+options:
+  server: ""
+  auth_token: ""
+schema:
+  server: url
+  auth_token: "str?"
