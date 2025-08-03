@@ -12,7 +12,7 @@
 
 Zigbee2MQTT Home Assistant add-ons.
 
-This is based on https://github.com/zigbee2mqtt/hassio-zigbee2mqtt with the following changes:
+This is a refactoring of https://github.com/zigbee2mqtt/hassio-zigbee2mqtt with the following (major) changes:
 - Rewrite to use s6-overlay & co, and improve configuration handling
 - ⚠️ BREAKING: Use `addon_config` mapping. See [migration](#migrating-from-official-add-on)
   - Config folder is now included in Home Assistant add-on backups
