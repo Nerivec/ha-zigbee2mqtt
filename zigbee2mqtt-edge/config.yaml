@@ -2,7 +2,7 @@
 name: Zigbee2MQTT Edge
 version: "edge"
 breaking_versions: []
-slug: zigbee2mqtt-edge
+slug: zigbee2mqtt_edge
 description: Development version of the Zigbee2MQTT add-on
 url: "https://github.com/Nerivec/ha-zigbee2mqtt/tree/main/zigbee2mqtt-edge"
 panel_icon: "mdi:zigbee"

@@ -8,11 +8,9 @@
 
 set -e
 
-bashio::log.info "Configuring nginx..."
+bashio::config.require 'server'
 
-if [[ -z "$(bashio::config 'server')" ]]; then
-bashio::exit.nok "'server' configuration is empty"
-fi
+bashio::log.info "Configuring nginx..."
 
 tempio \
     -conf /data/options.json \

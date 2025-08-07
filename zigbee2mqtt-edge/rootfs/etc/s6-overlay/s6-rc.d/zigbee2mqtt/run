@@ -77,7 +77,6 @@ if bashio::config.true 'force_onboarding'; then
 fi
 
 export TZ="$(bashio::supervisor.timezone)"
-export NODE_PATH=/app/node_modules
 export ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED='true'
 export ZIGBEE2MQTT_CONFIG_FRONTEND_PORT='8099'
 export ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_ENABLED='true'

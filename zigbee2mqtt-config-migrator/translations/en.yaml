@@ -1,0 +1,11 @@
+---
+configuration:
+  data_path:
+    name: Data path
+    description: Should match that of the Zigbee2MQTT add-on you want to migrate (in configuration tab).
+  new_addon_slug:
+    name: New addon slug
+    description: >-
+      Slug of the new add-on (can be obtained using the URL of the new add-on: `/hassio/addon/abcd1234_zigbee2mqtt/info` => `abcd1234_zigbee2mqtt`).
+      If not supplied, the migrator will try to determine the slug by looking at the installed Zigbee2MQTT add-ons and excluding installs not from this repository (old add-ons).
+      If the result contains more than one add-on, the process is aborted and you will have to enter the slug manually.
