@@ -14,7 +14,7 @@ Zigbee2MQTT Home Assistant add-ons.
 
 This is a refactoring of https://github.com/zigbee2mqtt/hassio-zigbee2mqtt with the following (major) changes:
 - Rewrite to use s6-overlay & co, and improve configuration handling
-- ⚠️ BREAKING: Use `addon_config` mapping. See [migration](#migrating-from-official-add-on)
+- ⚠️ BREAKING: Use `addon_config` mapping. See [migration](#migrating-from-zigbee2mqtthassio-zigbee2mqtt)
   - Config folder is now included in Home Assistant add-on backups
   - Each add-on now has its own config folder (if wanting to switch between regular and edge add-ons, you must copy over the data)
   - The toggle to delete the add-on data when uninstalling the add-on will now remove your Zigbee2MQTT configuration (yaml, db, logs, etc.)
@@ -30,29 +30,38 @@ This is a refactoring of https://github.com/zigbee2mqtt/hassio-zigbee2mqtt with 
 
 For more details: https://www.home-assistant.io/common-tasks/os#installing-a-third-party-add-on-repository
 
-## Migrating from official add-on
+## Migrating from zigbee2mqtt/hassio-zigbee2mqtt
 
 If you are migrating an existing installation from https://github.com/zigbee2mqtt/hassio-zigbee2mqtt you will need to move your `configuration.yaml` (& logs if wanted).
+You can either do this with the config migrator add-on available in this repository, or manually (see below).
+
+### Manual steps:
 
 - Install the add-on, (check the add-on configuration page if anything needs changing for your setup)
 - Install, start and open the [Studio Code Server add-on](https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-visual-studio-code-vsc-add-on) from the add-on store
 - In Menu > File > Add folder to workspace, select the `addon_configs` folder and add it
-- After the interface is done reloading, you should then see both the `config` and the `addon_configs` folders
+- After the interface is done reloading, you should then see both the `/config` and the `/addon_configs` folders
 - If the appropriate `*_zigbee2mqtt*` folder does not exist, you must create it
   - You can get the exact name the folder should have by navigating to the add-on page and taking note of the URL:
-    - Example URL: `http://homeassistant.local:8123/hassio/addon/abcd1234_zigbee2mqtt_edge/info`
-    - Example folder name: `abcd1234_zigbee2mqtt_edge`
+    - Example URL: `http://homeassistant.local:8123/hassio/addon/abcd1234_zigbee2mqtt/info`
+    - Example folder name: `abcd1234_zigbee2mqtt`
     - ⚠️ Be sure to take the right add-on if you have multiple Zigbee2MQTT installed
-- Move the contents of the `config/zigbee2mqtt` folder to the previously identified folder in `addon_configs`
+- Move the contents of the `/config/zigbee2mqtt` folder to the previously identified folder under `/addon_configs`
   - You should end up with something like this (uses example folder name from above):
     - `addon_configs`
-      - `abcd1234_zigbee2mqtt_edge`
+      - `abcd1234_zigbee2mqtt`
         - `log`
         - `configuration.yaml`
         - `coordinator_backup.json`
         - `database.db`
         - `database.db.backup`
         - `state.json`
-- Go back to the add-on and start it
+        - ...
+- Go back to the new Zigbee2MQTT add-on and start it
 
-If, after this, Zigbee2MQTT keeps showing the onboarding page on start, check the above steps again.
+> [!IMPORTANT]
+> If, after this, Zigbee2MQTT keeps showing the onboarding page on start, check the above steps again.
+
+> [!IMPORTANT]
+> Once done, make sure to remove the old Zigbee2MQTT add-on so it does not conflict with the new one (auto-start & co).
+> You can also remove the old repository from the add-on store and the old `/config/zigbee2mqtt` folder using Studio Code Server add-on to prevent misuse.

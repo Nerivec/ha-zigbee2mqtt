@@ -1,0 +1,35 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Zigbee2MQTT config migrator
+version: "0.0.1"
+breaking_versions: []
+slug: zigbee2mqtt_config_migrator
+description: Migrate the old `config` folder to the new `addon_config` folder used by the new add-on
+url: "https://github.com/Nerivec/ha-zigbee2mqtt/tree/main/zigbee2mqtt-config-migrator"
+panel_icon: "mdi:cog-box"
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+image: "ghcr.io/nerivec/ha-zigbee2mqtt-config-migrator-{arch}"
+init: false
+startup: once
+boot: manual_only
+hassio_api: true
+hassio_role: manager
+map:
+  - type: homeassistant_config
+    read_only: false
+    path: /config
+  - type: all_addon_configs
+    read_only: false
+    path: /addon_configs
+ports:
+  "8099/tcp": null
+options:
+  data_path: /config/zigbee2mqtt
+  new_addon_slug: ""
+schema:
+  data_path: str
+  new_addon_slug: str?
