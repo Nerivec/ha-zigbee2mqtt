@@ -57,6 +57,7 @@ You can either do this with the config migrator add-on available in this reposit
         - `database.db.backup`
         - `state.json`
         - ...
+- Update the settings on the add-on configuration page as needed (e.g. socat)
 - Go back to the new Zigbee2MQTT add-on and start it
 
 > [!IMPORTANT]
