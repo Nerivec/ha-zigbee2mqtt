@@ -16,27 +16,37 @@ if bashio::var.is_empty "$z2m_config"; then
     bashio::exit.ok
 fi
 
+function log_already_migrated() {
+    bashio::log.magenta "You have already migrated to addon_config, you can remove the add-on configuration 'data_path' to stop seeing this message."
+}
+
 if bashio::var.equals "$z2m_config" "/addon_config" || bashio::var.equals "$z2m_config" "/addon_config/";then
     bashio::log.info "data_path is already '/addon_config'. No migration necessary."
-    bashio::log.magenta "You have already migrated to addon_config, you can remove the add-on configuration 'data_path' to stop seeing this message."
+    log_already_migrated
 
     bashio::exit.ok
 fi
 
 if ! bashio::fs.directory_exists "$z2m_config"; then
     bashio::log.info "data_path '$z2m_config' does not exist. No migration necessary."
-    bashio::log.magenta "You have already migrated to addon_config, you can remove the add-on configuration 'data_path' to stop seeing this message."
+    log_already_migrated
 
     bashio::exit.ok
 fi
 
-if [[ "$(ls -A "$z2m_config" | wc -l)" -ne 0 ]]; then
+if [[ "$(ls -A "$z2m_config" | wc -l)" -eq 0 ]]; then
     bashio::log.info "data_path '$z2m_config' is empty. No migration necessary."
-    bashio::log.magenta "You have already migrated to addon_config, you can remove the add-on configuration 'data_path' to stop seeing this message."
+    log_already_migrated
 
     rm -rfv "$z2m_config"
     bashio::exit.ok
 fi
+
+function archive_src() {
+    tar -czvf "/addon_config/src-archive.tar.gz" "$z2m_config"
+    rm -rfv "$z2m_config"
+    bashio::log.info "Done archiving src."
+}
 
 bashio::log.info "Starting Zigbee2MQTT config migration..."
 
@@ -50,17 +60,40 @@ else
     if [[ "$(ls -A "/addon_config" | wc -l)" -ne 0 ]]; then
         bashio::log.info "New addon_config folder is not empty, archiving it..."
 
+        # if certain files exists in addon_config, check mtime
+        # check db first since it is always written on shutdown
+        if bashio::fs.file_exists "/addon_config/database.db"; then
+            if [[ "/addon_config/database.db" -nt "$z2m_config/database.db" ]]; then
+                bashio::log.info "/addon_config/database.db is newer. Skipping migration, only archiving src..."
+
+                archive_src
+                bashio::exit.ok
+            fi
+        else
+            # in case add-on onboarding was started but never finished, database.db does not exist
+            if bashio::fs.file_exists "/addon_config/configuration.yaml" \
+                && [[ "/addon_config/configuration.yaml" -nt "$z2m_config/configuration.yaml" ]]
+            then
+                bashio::log.info "/addon_config/configuration.yaml is newer. Skipping migration, only archiving src..."
+
+                archive_src
+                bashio::exit.ok
+            fi
+        fi
+
         tar -czvf "/addon_config.dst-archive.tar.gz" "/addon_config"
         # do not use /* to remove content as that forces prompt with zsh
         rm -rfv "/addon_config"
         mkdir "/addon_config"
         mv "/addon_config.dst-archive.tar.gz" "/addon_config/dst-archive.tar.gz"
+        bashio::log.info "Done archiving dst."
     fi
 fi
 
 cp -R -d "$z2m_config/." "/addon_config"
-tar -czvf "/addon_config/src-archive.tar.gz" "$z2m_config"
-rm -rfv "$z2m_config"
+bashio::log.info "Done copying src to dst."
+
+archive_src
 
 bashio::log.info "Successfully migrated to addon_config."
 bashio::log.magenta "You can now remove the add-on configuration 'data_path'."
