@@ -1,5 +1,9 @@
 ---
 configuration:
+  # @deprecated
+  data_path:
+    name: Data path (deprecated)
+    description: Used to migrate from previous version's folder to new backup-supporting addon_config folder.
   watchdog:
     name: Watchdog
     description: >-
