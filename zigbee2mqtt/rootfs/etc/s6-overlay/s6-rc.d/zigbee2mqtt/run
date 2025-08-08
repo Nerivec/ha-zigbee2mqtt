@@ -33,11 +33,11 @@ if bashio::config.true 'socat_enabled'; then
     SOCAT_SLAVE=$(bashio::config 'socat_slave')
 
     # Validate input
-    if [[ -z "$SOCAT_MASTER" ]]; then
+    if bashio::var.is_empty "$SOCAT_MASTER"; then
         bashio::exit.nok "Socat is enabled but not started because no master address specified"
     fi
 
-    if [[ -z "$SOCAT_SLAVE" ]]; then
+    if bashio::var.is_empty "$SOCAT_SLAVE"; then
         bashio::exit.nok "Socat is enabled but not started because no slave address specified"
     fi
 
