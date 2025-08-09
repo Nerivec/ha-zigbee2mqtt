@@ -16,27 +16,20 @@ if bashio::var.is_empty "$z2m_config"; then
     bashio::exit.ok
 fi
 
-function log_already_migrated() {
-    bashio::log.magenta "You have already migrated to addon_config, you can remove the add-on configuration 'data_path' to stop seeing this message."
-}
-
 if bashio::var.equals "$z2m_config" "/addon_config" || bashio::var.equals "$z2m_config" "/addon_config/";then
     bashio::log.info "data_path is already '/addon_config'. No migration necessary."
-    log_already_migrated
 
     bashio::exit.ok
 fi
 
 if ! bashio::fs.directory_exists "$z2m_config"; then
     bashio::log.info "data_path '$z2m_config' does not exist. No migration necessary."
-    log_already_migrated
 
     bashio::exit.ok
 fi
 
 if [[ "$(ls -A "$z2m_config" | wc -l)" -eq 0 ]]; then
     bashio::log.info "data_path '$z2m_config' is empty. No migration necessary."
-    log_already_migrated
 
     rm -rfv "$z2m_config"
     bashio::exit.ok
@@ -82,9 +75,12 @@ else
         fi
 
         tar -czvf "/addon_config.dst-archive.tar.gz" "/addon_config"
-        # do not use /* to remove content as that forces prompt with zsh
-        rm -rfv "/addon_config"
-        mkdir "/addon_config"
+
+        # do not use `rm -rfv /addon_config/*` to remove content as that forces prompt with zsh
+        for item in /addon_config/*; do
+            rm -rfv "$item"
+        done
+
         mv "/addon_config.dst-archive.tar.gz" "/addon_config/dst-archive.tar.gz"
         bashio::log.info "Done archiving dst."
     fi
