@@ -92,4 +92,3 @@ bashio::log.info "Done copying src to dst."
 archive_src
 
 bashio::log.info "Successfully migrated to addon_config."
-bashio::log.magenta "You can now remove the add-on configuration 'data_path'."
