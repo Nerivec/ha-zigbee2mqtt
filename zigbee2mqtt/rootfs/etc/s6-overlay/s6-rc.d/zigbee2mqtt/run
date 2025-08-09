@@ -10,7 +10,7 @@ set -e
 
 bashio::log.info "Configuring Zigbee2MQTT..."
 
-export ZIGBEE2MQTT_DATA="/config"
+export ZIGBEE2MQTT_DATA="/addon_config"
 
 mkdir -p "$ZIGBEE2MQTT_DATA" || bashio::exit.nok "Could not create $ZIGBEE2MQTT_DATA"
 

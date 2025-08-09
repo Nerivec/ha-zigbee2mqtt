@@ -1,7 +1,7 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Zigbee2MQTT
 version: "2.6.0"
-breaking_versions: []
+breaking_versions: ["2.7.0"]
 slug: zigbee2mqtt
 description: Use your ZigBee devices without the vendor's bridge or gateway
 url: "https://github.com/Nerivec/ha-zigbee2mqtt/tree/main/zigbee2mqtt"
@@ -22,7 +22,13 @@ timeout: 30
 services:
   - mqtt:need
 map:
-  - addon_config:rw
+  # @deprecated for migration purpose only
+  - type: homeassistant_config
+    read_only: false
+    path: /config
+  - type: addon_config
+    read_only: false
+    path: /addon_config
 ports:
   "8099/tcp": null
   "8485/tcp": 8485
@@ -35,6 +41,8 @@ options:
   socat_options: "-d -d"
   socat_log: false
 schema:
+  # @deprecated for migration purpose only
+  data_path: "str?"
   watchdog: "str?"
   force_onboarding: bool
   socat_enabled: "bool?"
