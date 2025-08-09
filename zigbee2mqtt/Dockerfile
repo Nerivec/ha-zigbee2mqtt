@@ -8,14 +8,14 @@ RUN apk --no-cache add socat tini nodejs eudev tzdata
 
 FROM base AS deps_and_build
 
-ARG Z2M_VERSION
+ARG ZIGBEE2MQTT_VERSION
 RUN \
     apk add --no-cache --virtual .buildtools npm make gcc g++ linux-headers udev git python3 \
     && mkdir -p /app/dist \
-    && curl -sSLf -o "/app.tar.gz" "https://github.com/Koenkk/zigbee2mqtt/archive/${Z2M_VERSION}.tar.gz" \
+    && curl -sSLf -o "/app.tar.gz" "https://github.com/Koenkk/zigbee2mqtt/archive/${ZIGBEE2MQTT_VERSION}.tar.gz" \
     && tar -C /app --strip-components=1 -xzvf "/app.tar.gz" \
     && rm -rf "/app.tar.gz" \
-    && echo ${Z2M_VERSION} > /app/dist/.hash \
+    && echo ${ZIGBEE2MQTT_VERSION} > /app/dist/.hash \
     && cd /app \
     && npm i -g $(jq -r '.packageManager' package.json) \
     && pnpm i --frozen-lockfile --no-optional \
