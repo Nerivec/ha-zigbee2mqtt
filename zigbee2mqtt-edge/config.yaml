@@ -1,7 +1,7 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Zigbee2MQTT Edge
-version: "edge"
-breaking_versions: []
+version: "edge-2"
+breaking_versions: [edge]
 slug: zigbee2mqtt_edge
 description: Development version of the Zigbee2MQTT add-on
 url: "https://github.com/Nerivec/ha-zigbee2mqtt/tree/main/zigbee2mqtt-edge"
@@ -22,12 +22,18 @@ timeout: 30
 services:
   - mqtt:need
 map:
-  - addon_config:rw
+  # @deprecated for migration purpose only
+  - type: homeassistant_config
+    read_only: false
+    path: /config
+  - type: addon_config
+    read_only: false
+    path: /addon_config
 ports:
   "8099/tcp": null
   "8485/tcp": 8485
 options:
-  watchdog: "default"
+  watchdog: default
   force_onboarding: false
   socat_enabled: false
   socat_master: "pty,raw,echo=0,link=/tmp/ttyZ2M,mode=777"
@@ -35,8 +41,10 @@ options:
   socat_options: "-d -d"
   socat_log: false
 schema:
+  # @deprecated for migration purpose only
+  data_path: "str?"
   watchdog: "str?"
-  force_onboarding: "bool"
+  force_onboarding: bool
   socat_enabled: "bool?"
   socat_master: "str?"
   socat_slave: "str?"

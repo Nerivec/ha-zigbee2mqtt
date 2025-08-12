@@ -8,7 +8,6 @@ RUN apk --no-cache add socat tini nodejs eudev tzdata
 
 FROM base AS deps_and_build
 
-ARG Z2M_VERSION
 # ignore cache for below layers when latest commit changes
 ADD "https://api.github.com/repos/Koenkk/zigbee2mqtt/branches/dev" latest_commit
 RUN \
